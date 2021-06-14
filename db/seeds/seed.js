@@ -1,8 +1,10 @@
 const db = require("../connection");
+const format = require("pg-format");
+const { addCategories } = require("../utils/data-manipulation");
 
 const seed = async (data) => {
   const { categoryData, commentData, reviewData, userData } = data;
-  console.log("here");
+  // console.log(categoryData);
   // 1. create tables
   await db.query("DROP TABLE IF EXISTS comments;");
   await db.query("DROP TABLE IF EXISTS reviews;");
@@ -42,6 +44,19 @@ const seed = async (data) => {
     );`);
 
   // 2. insert data
+
+  const categoriesInsert = format(
+    `
+    INSERT INTO categories
+    (slug, description)
+    VALUES
+    %L
+    RETURNING *;
+    `,
+    addCategories(categoryData)
+  );
+
+  await db.query(categoriesInsert);
 };
 
 module.exports = seed;
