@@ -1,6 +1,6 @@
 const db = require("../connection");
 const format = require("pg-format");
-const { addCategories } = require("../utils/data-manipulation");
+const { addCategories, addUsers } = require("../utils/data-manipulation");
 
 const seed = async (data) => {
   const { categoryData, commentData, reviewData, userData } = data;
@@ -57,6 +57,18 @@ const seed = async (data) => {
   );
 
   await db.query(categoriesInsert);
+
+  const usersInsert = format(
+    `INSERT INTO users
+    (username, name, avatar_url)
+    VALUES
+    %L
+    RETURNING *;
+    `,
+    addUsers(userData)
+  );
+
+  await db.query(usersInsert);
 };
 
 module.exports = seed;
