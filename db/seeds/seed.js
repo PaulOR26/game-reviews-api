@@ -29,7 +29,7 @@ const seed = async (data) => {
 
   await db.query(`CREATE TABLE reviews (
     review_id SERIAL PRIMARY KEY,
-    title VARCHAR(200) NOT NULL,
+    title VARCHAR(200) UNIQUE NOT NULL,
     review_body VARCHAR(1000) NOT NULL,
     designer VARCHAR(100),
     review_img_url VARCHAR(200) DEFAULT 'https://images.pexels.com/photos/163064/play-stone-network-networked-interactive-163064.jpeg',
@@ -41,11 +41,11 @@ const seed = async (data) => {
 
   await db.query(`CREATE TABLE comments (
     comment_id SERIAL PRIMARY KEY,
-    body VARCHAR(300) NOT NULL,
-    belongs_to VARCHAR(200),
-    created_by VARCHAR(100) REFERENCES users(username),
+    author VARCHAR(100) REFERENCES users(username),
+    review_id VARCHAR(200),
     votes INT DEFAULT 0,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    body VARCHAR(300) NOT NULL
     );`);
 
   // 2. insert data
@@ -85,17 +85,17 @@ const seed = async (data) => {
     addReviews(reviewData)
   );
 
-  await db.query(reviewsInsert);
+  const reference = await db.query(reviewsInsert);
 
   const commentsInsert = format(
     `
     INSERT INTO comments
-    (body, belongs_to, created_by, votes, created_at)
+    (author, review_id, votes, created_at, body)
     VALUES
     %L
     RETURNING *
     `,
-    addComments(commentData)
+    addComments(commentData, reference)
   );
 
   await db.query(commentsInsert);

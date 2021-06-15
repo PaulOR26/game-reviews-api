@@ -33,15 +33,19 @@ function addReviews(reviewArray) {
   });
 }
 
-function addComments(commentArray) {
+function addComments(commentArray, reference) {
+  const reviewLookup = {};
+  reference.rows.forEach((review) => {
+    reviewLookup[review.title] = review.review_id;
+  });
+
   return commentArray.map((commentObj) => {
     return [
-      commentObj.body,
-      commentObj.belongs_to,
       commentObj.created_by,
+      reviewLookup[commentObj.belongs_to],
       commentObj.votes,
       commentObj.created_at,
-      //review_id
+      commentObj.body,
     ];
   });
 }
