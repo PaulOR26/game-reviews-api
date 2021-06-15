@@ -2,6 +2,7 @@ const {
   addCategories,
   addUsers,
   addReviews,
+  addComments,
 } = require("../db/utils/data-manipulation");
 
 describe("addCategories", () => {
@@ -154,7 +155,7 @@ describe("addReviews", () => {
     expect(actual).toEqual(expected);
   });
 
-  test.only("Returns an array with multpiple arrays when passed an array with multiple objects", () => {
+  test("Returns an array with multpiple arrays when passed an array with multiple objects", () => {
     const reviewArray = [
       {
         title: "Agricola",
@@ -202,6 +203,76 @@ describe("addReviews", () => {
         new Date(1610964101251),
         5,
         "https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png",
+      ],
+    ];
+    expect(actual).toEqual(expected);
+  });
+});
+
+describe.only("addComments", () => {
+  test("returns an empty array when passed an empty array", () => {
+    const actual = addComments([]);
+    const expected = [];
+    expect(actual).toEqual(expected);
+  });
+  test("Returns a single nested array when passed an array with one object", () => {
+    const commentArray = [
+      {
+        body: "I loved this game too!",
+        belongs_to: "Jenga",
+        created_by: "bainesface",
+        votes: 16,
+        created_at: new Date(1511354613389),
+      },
+    ];
+
+    const actual = addComments(commentArray);
+
+    const expected = [
+      [
+        "I loved this game too!",
+        "Jenga",
+        "bainesface",
+        16,
+        new Date(1511354613389),
+      ],
+    ];
+    expect(actual).toEqual(expected);
+  });
+  test("Returns an array with multpiple arrays when passed an array with multiple objects", () => {
+    const commentArray = [
+      {
+        body: "I loved this game too!",
+        belongs_to: "Jenga",
+        created_by: "bainesface",
+        votes: 16,
+        created_at: new Date(1511354613389),
+      },
+      {
+        body: "My dog loved this game too!",
+        belongs_to: "Ultimate Werewolf",
+        created_by: "mallionaire",
+        votes: 13,
+        created_at: new Date(1610964545410),
+      },
+    ];
+
+    const actual = addComments(commentArray);
+
+    const expected = [
+      [
+        "I loved this game too!",
+        "Jenga",
+        "bainesface",
+        16,
+        new Date(1511354613389),
+      ],
+      [
+        "My dog loved this game too!",
+        "Ultimate Werewolf",
+        "mallionaire",
+        13,
+        new Date(1610964545410),
       ],
     ];
     expect(actual).toEqual(expected);

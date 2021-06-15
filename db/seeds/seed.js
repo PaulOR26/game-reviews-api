@@ -1,6 +1,11 @@
 const db = require("../connection");
 const format = require("pg-format");
-const { addCategories, addUsers } = require("../utils/data-manipulation");
+const {
+  addCategories,
+  addUsers,
+  addReviews,
+  addComments,
+} = require("../utils/data-manipulation");
 
 const seed = async (data) => {
   const { categoryData, commentData, reviewData, userData } = data;
@@ -27,7 +32,7 @@ const seed = async (data) => {
     title VARCHAR(200) NOT NULL,
     review_body VARCHAR(1000) NOT NULL,
     designer VARCHAR(100),
-    review_image_url VARCHAR(200) DEFAULT 'https://images.pexels.com/photos/163064/play-stone-network-networked-interactive-163064.jpeg',
+    review_img_url VARCHAR(200) DEFAULT 'https://images.pexels.com/photos/163064/play-stone-network-networked-interactive-163064.jpeg',
     votes INT DEFAULT 0,
     category VARCHAR(200) REFERENCES categories(slug),
     owner VARCHAR(100) REFERENCES users(username),
@@ -36,11 +41,11 @@ const seed = async (data) => {
 
   await db.query(`CREATE TABLE comments (
     comment_id SERIAL PRIMARY KEY,
-    author VARCHAR(100) REFERENCES users(username),
-    review_id INT REFERENCES reviews(review_id),
+    body VARCHAR(300) NOT NULL,
+    belongs_to VARCHAR(200),
+    created_by VARCHAR(100) REFERENCES users(username),
     votes INT DEFAULT 0,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    body VARCHAR(300) NOT NULL
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );`);
 
   // 2. insert data
@@ -69,6 +74,31 @@ const seed = async (data) => {
   );
 
   await db.query(usersInsert);
+
+  const reviewsInsert = format(
+    `INSERT INTO reviews
+    (title, review_body, designer, review_img_url, votes, category, owner, created_at)
+    VALUES
+    %L
+    RETURNING *;
+    `,
+    addReviews(reviewData)
+  );
+
+  await db.query(reviewsInsert);
+
+  const commentsInsert = format(
+    `
+    INSERT INTO comments
+    (body, belongs_to, created_by, votes, created_at)
+    VALUES
+    %L
+    RETURNING *
+    `,
+    addComments(commentData)
+  );
+
+  await db.query(commentsInsert);
 };
 
 module.exports = seed;
