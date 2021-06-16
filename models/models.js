@@ -17,7 +17,6 @@ exports.selectReviewById = (reviewId) => {
       [reviewId]
     )
     .then((result) => {
-      // console.log(result.rows);
       const review = result.rows[0];
       if (!review) {
         return Promise.reject({
@@ -27,4 +26,24 @@ exports.selectReviewById = (reviewId) => {
       }
       return { review: review };
     });
+};
+
+exports.insertReviewById = (review_id, votes) => {
+  // console.log(votes, 'here');
+  if (/\d/.test(votes)) {
+    return db
+      .query(
+        `
+  UPDATE reviews
+  SET
+  votes = votes + $1
+  WHERE review_id = $2
+  RETURNING *
+  `,
+        [votes, review_id]
+      )
+      .then((result) => {
+        return { newVotes: result.rows[0].votes };
+      });
+  } else return Promise.reject({ status: 400, msg: 'Invalid vote value' });
 };
