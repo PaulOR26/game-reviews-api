@@ -10,9 +10,11 @@ exports.getCategories = (req, res) => {
     });
 };
 
-exports.getReviewById = (req, res) => {
+exports.getReviewById = (req, res, next) => {
   const reviewId = req.params.review_id;
-  selectReviewById(reviewId).then((result) => {
-    res.status(200).send(result);
-  });
+  selectReviewById(reviewId)
+    .then((result) => {
+      res.status(200).send(result);
+    })
+    .catch(next);
 };

@@ -46,9 +46,9 @@ describe('GET/api/reviews/:review_id', () => {
       created_at: '2021-01-18T10:01:41.251Z',
     });
   });
-  // test('Status 404: Returns error when specified review_id does not exist', async () => {
-  //   const { body } = await request(app).get('api/reviews/14').expect(404);
+  test('Status 404: Returns error when specified review_id does not exist', async () => {
+    const { body } = await request(app).get('/api/reviews/14').expect(404);
 
-  //   expect(body.msg).toBe('Requested review does not exist');
-  // });
+    expect(body.msg).toBe('Requested review does not exist');
+  });
 });
