@@ -1,10 +1,22 @@
-const db = require("../db/connection");
+const db = require('../db/connection');
 
-function selectCategories() {
+exports.selectCategories = () => {
   return db.query(`SELECT * FROM categories`).then((result) => {
-    // console.log(result.rows);
     return { categories: result.rows };
   });
-}
+};
 
-module.exports = { selectCategories };
+exports.selectReviewById = (reviewId) => {
+  return db
+    .query(
+      `
+  SELECT * FROM reviews
+  WHERE review_id = $1
+  ;
+  `,
+      [reviewId]
+    )
+    .then((result) => {
+      return { review: result.rows[0] };
+    });
+};

@@ -1,6 +1,6 @@
-const { selectCategories } = require("../models/models");
+const { selectCategories, selectReviewById } = require('../models/models');
 
-function getCategories(req, res) {
+exports.getCategories = (req, res) => {
   selectCategories()
     .then((result) => {
       res.status(200).send(result);
@@ -8,6 +8,11 @@ function getCategories(req, res) {
     .catch((err) => {
       console.log(err);
     });
-}
+};
 
-module.exports = { getCategories };
+exports.getReviewById = (req, res) => {
+  const reviewId = req.params.review_id;
+  selectReviewById(reviewId).then((result) => {
+    res.status(200).send(result);
+  });
+};

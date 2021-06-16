@@ -1,7 +1,5 @@
 const db = require("../connection");
 
-// extract any functions you are using to manipulate your data, into this file
-
 function addCategories(categoryArray) {
   return categoryArray.map((catObj) => {
     return [catObj.slug, catObj.description];
@@ -20,6 +18,7 @@ function addReviews(reviewArray) {
       reviewObj.review_img_url =
         "https://images.pexels.com/photos/163064/play-stone-network-networked-interactive-163064.jpeg";
     }
+
     return [
       reviewObj.title,
       reviewObj.review_body,
@@ -33,8 +32,9 @@ function addReviews(reviewArray) {
   });
 }
 
-function addComments(commentArray, reference) {
+function addComments(commentArray, reference = { rows: [] }) {
   const reviewLookup = {};
+
   reference.rows.forEach((review) => {
     reviewLookup[review.title] = review.review_id;
   });

@@ -143,13 +143,13 @@ describe("addReviews", () => {
     const expected = [
       [
         "Agricola",
-        "Uwe Rosenberg",
-        "mallionaire",
         "Farmyard fun!",
-        "euro game",
-        new Date(1610964020514),
-        1,
+        "Uwe Rosenberg",
         "https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png",
+        1,
+        "euro game",
+        "mallionaire",
+        new Date(1610964020514),
       ],
     ];
     expect(actual).toEqual(expected);
@@ -159,25 +159,25 @@ describe("addReviews", () => {
     const reviewArray = [
       {
         title: "Agricola",
-        designer: "Uwe Rosenberg",
-        owner: "mallionaire",
         review_body: "Farmyard fun!",
-        category: "euro game",
-        created_at: new Date(1610964020514),
-        votes: 1,
+        designer: "Uwe Rosenberg",
         review_img_url:
           "https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png",
+        votes: 1,
+        category: "euro game",
+        owner: "mallionaire",
+        created_at: new Date(1610964020514),
       },
       {
         title: "Jenga",
-        designer: "Leslie Scott",
-        owner: "philippaclaire9",
         review_body: "Fiddly fun for all the family",
-        category: "dexterity",
-        created_at: new Date(1610964101251),
-        votes: 5,
+        designer: "Leslie Scott",
         review_img_url:
           "https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png",
+        votes: 5,
+        category: "dexterity",
+        owner: "philippaclaire9",
+        created_at: new Date(1610964101251),
       },
     ];
 
@@ -186,30 +186,30 @@ describe("addReviews", () => {
     const expected = [
       [
         "Agricola",
-        "Uwe Rosenberg",
-        "mallionaire",
         "Farmyard fun!",
-        "euro game",
-        new Date(1610964020514),
-        1,
+        "Uwe Rosenberg",
         "https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png",
+        1,
+        "euro game",
+        "mallionaire",
+        new Date(1610964020514),
       ],
       [
         "Jenga",
-        "Leslie Scott",
-        "philippaclaire9",
         "Fiddly fun for all the family",
-        "dexterity",
-        new Date(1610964101251),
-        5,
+        "Leslie Scott",
         "https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png",
+        5,
+        "dexterity",
+        "philippaclaire9",
+        new Date(1610964101251),
       ],
     ];
     expect(actual).toEqual(expected);
   });
 });
 
-describe.only("addComments", () => {
+describe("addComments", () => {
   test("returns an empty array when passed an empty array", () => {
     const actual = addComments([]);
     const expected = [];
@@ -226,16 +226,12 @@ describe.only("addComments", () => {
       },
     ];
 
-    const actual = addComments(commentArray);
+    const actual = addComments(commentArray, {
+      rows: [{ title: "Jenga", review_id: 2 }],
+    });
 
     const expected = [
-      [
-        "I loved this game too!",
-        "Jenga",
-        "bainesface",
-        16,
-        new Date(1511354613389),
-      ],
+      ["bainesface", 2, 16, new Date(1511354613389), "I loved this game too!"],
     ];
     expect(actual).toEqual(expected);
   });
@@ -257,22 +253,22 @@ describe.only("addComments", () => {
       },
     ];
 
-    const actual = addComments(commentArray);
+    const actual = addComments(commentArray, {
+      rows: [
+        { title: "Jenga", review_id: 2 },
+        { title: "Ultimate Werewolf", review_id: 3 },
+      ],
+    });
 
     const expected = [
+      ["bainesface", 2, 16, new Date(1511354613389), "I loved this game too!"],
+
       [
-        "I loved this game too!",
-        "Jenga",
-        "bainesface",
-        16,
-        new Date(1511354613389),
-      ],
-      [
-        "My dog loved this game too!",
-        "Ultimate Werewolf",
         "mallionaire",
+        3,
         13,
         new Date(1610964545410),
+        "My dog loved this game too!",
       ],
     ];
     expect(actual).toEqual(expected);
