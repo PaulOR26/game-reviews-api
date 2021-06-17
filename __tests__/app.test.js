@@ -125,7 +125,7 @@ describe('PATCH /api/reviews/:review_Id', () => {
   });
 });
 
-describe.only('GET /api/reviews', () => {
+describe('GET /api/reviews', () => {
   test('Status 200: sends back all reviews', async () => {
     const { body } = await request(app).get('/api/reviews').expect(200);
 
@@ -151,13 +151,35 @@ describe.only('GET /api/reviews', () => {
       .get('/api/reviews?sort_by=title')
       .expect(200);
 
-    expect(body.reviews).toBeSortedBy('title');
+    expect(body.reviews).toBeSortedBy('title', { descending: true });
   });
-  test.only('Allows asc/desc oder for sort_by query', async () => {
+  test('Allows asc/desc order for sort_by query', async () => {
     const { body } = await request(app)
       .get('/api/reviews?sort_by=owner&order=desc')
       .expect(200);
 
     expect(body.reviews).toBeSortedBy('owner', { descending: true });
+  });
+  test('Allows category filter', async () => {
+    const { body } = await request(app)
+      .get('/api/reviews?order=desc&category=social deduction&sort_by=votes')
+      .expect(200);
+
+    expect(body.reviews).toHaveLength(11);
+
+    body.reviews.forEach((review) => {
+      expect(review).toEqual(
+        expect.objectContaining({
+          owner: expect.any(String),
+          title: expect.any(String),
+          review_id: expect.any(Number),
+          category: expect.any(String),
+          review_img_url: expect.any(String),
+          created_at: expect.any(String),
+          votes: expect.any(Number),
+          comment_count: expect.any(Number),
+        })
+      );
+    });
   });
 });

@@ -12,7 +12,6 @@ exports.handleCustomerErrors = (err, req, res, next) => {
 
 // Handling psql
 exports.handlePsqlErrors = (err, req, res, next) => {
-  console.log(err);
   if (err.code === '22P02') {
     res.status(400).send({ msg: 'Review ID should be a number' });
   } else next(err);

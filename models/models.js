@@ -86,27 +86,37 @@ exports.selectReviews = (query) => {
     'votes',
   ];
 
-  const { sort_by } = query;
-  const { order } = query;
+  const { sort_by = 'created_at' } = query;
+  const { order = 'desc' } = query;
   const { category } = query;
 
-  if (reviewCols.includes(sort_by) && (order === 'asc' || order === 'desc')) {
-    return db
-      .query(
-        `
-        SELECT reviews.owner, title, reviews.review_id, category, review_img_url, reviews.created_at, reviews.votes, COUNT(comments.review_id)::INT AS comment_count 
-        FROM reviews
-        LEFT JOIN comments
-        ON comments.review_id = reviews.review_id
-        GROUP BY reviews.review_id
-        ORDER BY ${sort_by} ${order}
-    ;`
-      )
-      .then((result) => {
-        return { reviews: result.rows };
-      });
+  const filters = [];
+
+  let qryStr = `
+  SELECT reviews.owner, title, reviews.review_id, category, review_img_url, reviews.created_at, reviews.votes, COUNT(comments.review_id)::INT AS comment_count 
+  FROM reviews
+  LEFT JOIN comments
+  ON comments.review_id = reviews.review_id
+  `;
+
+  if (category) {
+    filters.push(category);
+    qryStr += `
+  WHERE category = $1
+  `;
   }
-  //   console.log(sort_by);
-  // console.log(order);
-  // console.log(category);
+
+  qryStr += `
+  GROUP BY reviews.review_id
+  `;
+
+  if (reviewCols.includes(sort_by)) {
+    qryStr += `
+  ORDER BY ${sort_by} ${order}
+    `;
+  }
+
+  return db.query(qryStr + ';', filters).then((result) => {
+    return { reviews: result.rows };
+  });
 };
