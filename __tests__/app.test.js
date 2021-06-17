@@ -44,6 +44,7 @@ describe('GET /api/reviews/:review_id', () => {
       category: 'dexterity',
       owner: 'philippaclaire9',
       created_at: '2021-01-18T10:01:41.251Z',
+      comment_count: 3,
     });
   });
   test('Status 404: Returns error when specified review_id does not exist', async () => {
@@ -53,12 +54,12 @@ describe('GET /api/reviews/:review_id', () => {
   });
   test('Status 400: Returns error when specified review_id is not a number', async () => {
     const { body } = await request(app).get('/api/reviews/bad').expect(400);
-    expect(body.msg).toBe('Invalid input');
+    expect(body.msg).toBe('Review ID should be a number');
 
     const { body: body2 } = await request(app)
       .get('/api/reviews/£$^&*')
       .expect(400);
-    expect(body2.msg).toBe('Invalid input');
+    expect(body2.msg).toBe('Review ID should be a number');
   });
 });
 
@@ -76,7 +77,7 @@ describe('ALL /* Not Found', () => {
 
 describe('PATCH /api/reviews/:review_Id', () => {
   test('Status 200 - review modified', async () => {
-    const reqBody = { votes: '-1' };
+    const reqBody = { inc_votes: '-1' };
     const { body } = await request(app)
       .patch('/api/reviews/3')
       .send(reqBody)
@@ -85,13 +86,13 @@ describe('PATCH /api/reviews/:review_Id', () => {
     expect(body.newVotes).toEqual(4);
   });
   test('Status 400 - returns error when votes not a number', async () => {
-    const reqBody = { votes: 'hello' };
+    const reqBody = { inc_votes: 'hello' };
     const { body } = await request(app)
       .patch('/api/reviews/3')
       .send(reqBody)
       .expect(400);
 
-    expect(body.msg).toBe('Invalid vote value');
+    expect(body.msg).toBe('Invalid input: value should be a whole number');
   });
   test('Status 400 - returns error when votes key incorrect', async () => {
     const reqBody = { votemjks: 3 };
@@ -100,6 +101,63 @@ describe('PATCH /api/reviews/:review_Id', () => {
       .send(reqBody)
       .expect(400);
 
-    expect(body.msg).toBe('Invalid vote key');
+    expect(body.msg).toBe('Invalid input: vote key should be "inc_votes');
+  });
+  test('Status 400 - returns error when votes object empty', async () => {
+    const reqBody = {};
+    const { body } = await request(app)
+      .patch('/api/reviews/3')
+      .send(reqBody)
+      .expect(400);
+
+    expect(body.msg).toBe('Invalid input: no data submitted');
+  });
+  test('Status 400 - returns error when votes object has more than 1 key', async () => {
+    const reqBody = { inc_votes: 3, something: 7 };
+    const { body } = await request(app)
+      .patch('/api/reviews/3')
+      .send(reqBody)
+      .expect(400);
+
+    expect(body.msg).toBe(
+      'Invalid input: There should only be 1 vote key (inc_votes)'
+    );
+  });
+});
+
+describe.only('GET /api/reviews', () => {
+  test('Status 200: sends back all reviews', async () => {
+    const { body } = await request(app).get('/api/reviews').expect(200);
+
+    expect(body.reviews).toHaveLength(13);
+
+    body.reviews.forEach((review) => {
+      expect(review).toEqual(
+        expect.objectContaining({
+          owner: expect.any(String),
+          title: expect.any(String),
+          review_id: expect.any(Number),
+          category: expect.any(String),
+          review_img_url: expect.any(String),
+          created_at: expect.any(String),
+          votes: expect.any(Number),
+          comment_count: expect.any(Number),
+        })
+      );
+    });
+  });
+  test('Allows query for sort_by', async () => {
+    const { body } = await request(app)
+      .get('/api/reviews?sort_by=title')
+      .expect(200);
+
+    expect(body.reviews).toBeSortedBy('title');
+  });
+  test.only('Allows asc/desc oder for sort_by query', async () => {
+    const { body } = await request(app)
+      .get('/api/reviews?sort_by=owner&order=desc')
+      .expect(200);
+
+    expect(body.reviews).toBeSortedBy('owner', { descending: true });
   });
 });

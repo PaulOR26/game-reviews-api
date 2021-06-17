@@ -1,20 +1,20 @@
-const db = require("../connection");
-const format = require("pg-format");
+const db = require('../connection');
+const format = require('pg-format');
 const {
   addCategories,
   addUsers,
   addReviews,
   addComments,
-} = require("../utils/data-manipulation");
+} = require('../utils/data-manipulation');
 
 const seed = async (data) => {
   const { categoryData, commentData, reviewData, userData } = data;
   // console.log(categoryData);
   // 1. create tables
-  await db.query("DROP TABLE IF EXISTS comments;");
-  await db.query("DROP TABLE IF EXISTS reviews;");
-  await db.query("DROP TABLE IF EXISTS categories;");
-  await db.query("DROP TABLE IF EXISTS users;");
+  await db.query('DROP TABLE IF EXISTS comments;');
+  await db.query('DROP TABLE IF EXISTS reviews;');
+  await db.query('DROP TABLE IF EXISTS categories;');
+  await db.query('DROP TABLE IF EXISTS users;');
 
   await db.query(`CREATE TABLE categories (
     slug VARCHAR(200) PRIMARY KEY,
@@ -42,7 +42,7 @@ const seed = async (data) => {
   await db.query(`CREATE TABLE comments (
     comment_id SERIAL PRIMARY KEY,
     author VARCHAR(100) REFERENCES users(username),
-    review_id VARCHAR(200),
+    review_id INT NOT NULL,
     votes INT DEFAULT 0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     body VARCHAR(300) NOT NULL

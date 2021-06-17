@@ -2,6 +2,7 @@ const {
   selectCategories,
   selectReviewById,
   insertReviewById,
+  selectReviews,
 } = require('../models/models');
 
 exports.getCategories = (req, res) => {
@@ -14,11 +15,16 @@ exports.getCategories = (req, res) => {
     });
 };
 
+exports.getReviews = (req, res, next) => {
+  const { query } = req;
+  selectReviews(query).then((result) => {
+    res.status(200).send(result);
+  });
+};
+
 exports.getReviewById = (req, res, next) => {
-  // console.log('hello');
-  // console.log(Object.keys(req));
   const reviewId = req.params.review_id;
-  // console.log(reviewId);
+
   selectReviewById(reviewId)
     .then((result) => {
       res.status(200).send(result);
@@ -27,14 +33,9 @@ exports.getReviewById = (req, res, next) => {
 };
 
 exports.patchReviewById = (req, res, next) => {
-  const { review_id } = req.params;
-  const { votes } = req.body;
-
-  if (!votes) res.status(400).send({ msg: 'Invalid vote key' });
-  else
-    insertReviewById(review_id, votes)
-      .then((result) => {
-        res.status(200).send(result);
-      })
-      .catch(next);
+  insertReviewById(req)
+    .then((result) => {
+      res.status(200).send(result);
+    })
+    .catch(next);
 };
