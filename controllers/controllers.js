@@ -6,13 +6,9 @@ const {
 } = require('../models/models');
 
 exports.getCategories = (req, res) => {
-  selectCategories()
-    .then((result) => {
-      res.status(200).send(result);
-    })
-    .catch((err) => {
-      // console.log(err);
-    });
+  selectCategories().then((result) => {
+    res.status(200).send(result);
+  });
 };
 
 exports.getReviews = (req, res, next) => {

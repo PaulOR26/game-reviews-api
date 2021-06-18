@@ -1,5 +1,5 @@
 const db = require('../db/connection');
-// const reviews = require('../db/data/test-data/reviews');
+
 const {
   noReview,
   badData,
@@ -10,10 +10,9 @@ const {
   noCatResults,
 } = require('../errors/custom-errors');
 
-exports.selectCategories = () => {
-  return db.query(`SELECT * FROM categories`).then((result) => {
-    return { categories: result.rows };
-  });
+exports.selectCategories = async () => {
+  const { rows: categories } = await db.query(`SELECT * FROM categories`);
+  return { categories: categories };
 };
 
 exports.selectReviewById = async (reviewId) => {
@@ -30,8 +29,8 @@ exports.selectReviewById = async (reviewId) => {
     [reviewId]
   );
 
-  if (qryResults[0]) return { review: qryResults[0] };
-  else return noReview();
+  if (!qryResults[0]) await noReview();
+  else return { review: qryResults[0] };
 };
 
 exports.insertReviewById = async (req) => {
@@ -74,8 +73,6 @@ exports.selectReviews = async (query) => {
     return cat.slug;
   });
 
-  // console.log(categories);
-
   const { sort_by = 'created_at' } = query;
   const { order = 'desc' } = query;
   const { category } = query;
@@ -89,14 +86,12 @@ exports.selectReviews = async (query) => {
   ON comments.review_id = reviews.review_id
   `;
 
-  if (category) {
-    if (categories.includes(category)) {
-      filters.push(category);
-      qryStr += `
+  if (categories.includes(category)) {
+    filters.push(category);
+    qryStr += `
   WHERE category = $1
   `;
-    } else await badCategory();
-  }
+  } else if (category) await badCategory();
 
   qryStr += `
   GROUP BY reviews.review_id

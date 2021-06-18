@@ -9,7 +9,6 @@ const {
 
 const seed = async (data) => {
   const { categoryData, commentData, reviewData, userData } = data;
-  // console.log(categoryData);
   // 1. create tables
   await db.query('DROP TABLE IF EXISTS comments;');
   await db.query('DROP TABLE IF EXISTS reviews;');
