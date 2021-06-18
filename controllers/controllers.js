@@ -33,9 +33,11 @@ exports.getReviewById = (req, res, next) => {
 
 exports.getCommentsByReviewId = (req, res, next) => {
   const { review_id } = req.params;
-  selectCommentsByReviewId(review_id).then((result) => {
-    res.status(200).send(result);
-  });
+  selectCommentsByReviewId(review_id)
+    .then((result) => {
+      res.status(200).send(result);
+    })
+    .catch(next);
 };
 
 exports.patchReviewById = (req, res, next) => {

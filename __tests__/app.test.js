@@ -232,4 +232,11 @@ describe('GET /api/reviews/:review_id/comments', () => {
       );
     });
   });
+  test('Status 404: Returns error when specified review_id does not exist', async () => {
+    const { body } = await request(app)
+      .get('/api/reviews/14/comments')
+      .expect(404);
+
+    expect(body.msg).toBe('Requested review does not exist');
+  });
 });

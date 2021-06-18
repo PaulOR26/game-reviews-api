@@ -44,7 +44,8 @@ WHERE comments.review_id = $1
 `,
     [reviewId]
   );
-  return { comments: qryResults };
+  if (qryResults.length === 0) await noReview();
+  else return { comments: qryResults };
 };
 
 exports.insertReviewById = async (reviewId, body) => {
