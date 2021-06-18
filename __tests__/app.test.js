@@ -182,4 +182,32 @@ describe('GET /api/reviews', () => {
       );
     });
   });
+  test('status 400 sort_by column does not exist', async () => {
+    const { body } = await request(app)
+      .get('/api/reviews?order=desc&category=social deduction&sort_by=votlbes')
+      .expect(400);
+
+    expect(body.msg).toBe('Invalid input: sort_by column does not exist');
+  });
+  test('status 405 order !== asc or desc', async () => {
+    const { body } = await request(app)
+      .get('/api/reviews?order=dc&category=social deduction&sort_by=votes')
+      .expect(405);
+
+    expect(body.msg).toBe('Invalid input: order should be asc or desc');
+  });
+  test('status 400 category not in database', async () => {
+    const { body } = await request(app)
+      .get('/api/reviews?order=desc&category=sociction&sort_by=votes')
+      .expect(400);
+
+    expect(body.msg).toBe("Invalid input: category doesn't exist");
+  });
+  test('status 204 category exists but there are no associated reviews', async () => {
+    const { body } = await request(app)
+      .get("/api/reviews?order=desc&category=children's games&sort_by=votes")
+      .expect(404);
+
+    expect(body.msg).toBe('No reviews for selected category');
+  });
 });

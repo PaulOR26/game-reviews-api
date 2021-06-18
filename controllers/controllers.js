@@ -17,9 +17,11 @@ exports.getCategories = (req, res) => {
 
 exports.getReviews = (req, res, next) => {
   const { query } = req;
-  selectReviews(query).then((result) => {
-    res.status(200).send(result);
-  });
+  selectReviews(query)
+    .then((result) => {
+      res.status(200).send(result);
+    })
+    .catch(next);
 };
 
 exports.getReviewById = (req, res, next) => {

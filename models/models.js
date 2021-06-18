@@ -1,5 +1,14 @@
 const db = require('../db/connection');
-const reviews = require('../db/data/test-data/reviews');
+// const reviews = require('../db/data/test-data/reviews');
+const {
+  noReview,
+  badData,
+  rejectData,
+  badSortBy,
+  badOrder,
+  badCategory,
+  noCatResults,
+} = require('../errors/custom-errors');
 
 exports.selectCategories = () => {
   return db.query(`SELECT * FROM categories`).then((result) => {
@@ -7,10 +16,9 @@ exports.selectCategories = () => {
   });
 };
 
-exports.selectReviewById = (reviewId) => {
-  return db
-    .query(
-      `
+exports.selectReviewById = async (reviewId) => {
+  const { rows: qryResults } = await db.query(
+    `
       SELECT reviews.*, COUNT(comments.review_id)::INT AS comment_count
       FROM reviews
       LEFT JOIN comments
@@ -19,63 +27,35 @@ exports.selectReviewById = (reviewId) => {
       GROUP BY reviews.review_id
   ;
   `,
-      [reviewId]
-    )
-    .then((result) => {
-      if (!result.rows[0]) {
-        return Promise.reject({
-          status: 404,
-          msg: 'Requested review does not exist',
-        });
-      } else {
-        return { review: result.rows[0] };
-      }
-    });
+    [reviewId]
+  );
+
+  if (qryResults[0]) return { review: qryResults[0] };
+  else return noReview();
 };
 
-exports.insertReviewById = (req) => {
-  let isError = false;
-  let errMsg = '';
-
+exports.insertReviewById = async (req) => {
   const { review_id } = req.params;
   const { inc_votes } = req.body;
 
-  if (Object.keys(req.body).length === 0) {
-    isError = true;
-    errMsg = 'Invalid input: no data submitted';
-  } else if (Object.keys(req.body).length > 1) {
-    isError = true;
-    errMsg = 'Invalid input: There should only be 1 vote key (inc_votes)';
-  } else if (!inc_votes) {
-    isError = true;
-    errMsg = 'Invalid input: vote key should be "inc_votes';
-  } else if (!/^-*\d+$/.test(inc_votes)) {
-    isError = true;
-    errMsg = 'Invalid input: value should be a whole number';
-  }
-  if (isError) {
-    return Promise.reject({
-      status: 400,
-      msg: errMsg,
-    });
-  } else
-    return db
-      .query(
-        `
-  UPDATE reviews
-  SET
-  votes = votes + $1
+  const [isError, errMsg] = badData(req.body, inc_votes);
+
+  if (isError) await rejectData(errMsg);
+  else {
+    const { rows: qryResults } = await db.query(
+      `
+  UPDATE reviews SET votes = votes + $1
   WHERE review_id = $2
   RETURNING *
   `,
-        [inc_votes, review_id]
-      )
-      .then((result) => {
-        return { newVotes: result.rows[0].votes };
-      });
+      [inc_votes, review_id]
+    );
+
+    return { newVotes: qryResults[0].votes };
+  }
 };
 
-exports.selectReviews = (query) => {
+exports.selectReviews = async (query) => {
   const reviewCols = [
     'owner',
     'title',
@@ -85,6 +65,16 @@ exports.selectReviews = (query) => {
     'created_at',
     'votes',
   ];
+
+  const { rows } = await db.query(`
+  SELECT DISTINCT slug FROM categories;
+  `);
+
+  const categories = rows.map((cat) => {
+    return cat.slug;
+  });
+
+  // console.log(categories);
 
   const { sort_by = 'created_at' } = query;
   const { order = 'desc' } = query;
@@ -100,23 +90,30 @@ exports.selectReviews = (query) => {
   `;
 
   if (category) {
-    filters.push(category);
-    qryStr += `
+    if (categories.includes(category)) {
+      filters.push(category);
+      qryStr += `
   WHERE category = $1
   `;
+    } else await badCategory();
   }
 
   qryStr += `
   GROUP BY reviews.review_id
   `;
 
-  if (reviewCols.includes(sort_by)) {
-    qryStr += `
+  if (!reviewCols.includes(sort_by)) await badSortBy();
+  if (order !== 'desc' && order !== 'asc') await badOrder();
+
+  qryStr += `
   ORDER BY ${sort_by} ${order}
     `;
+
+  const { rows: qryResults } = await db.query(qryStr + ';', filters);
+
+  if (category && qryResults.length === 0) {
+    await noCatResults();
   }
 
-  return db.query(qryStr + ';', filters).then((result) => {
-    return { reviews: result.rows };
-  });
+  return { reviews: qryResults };
 };

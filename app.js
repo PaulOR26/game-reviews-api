@@ -10,7 +10,7 @@ const {
   handlePsqlErrors,
   handleServerErrors,
   notFound,
-} = require('./error-handlers');
+} = require('./errors/error-handlers');
 const app = express();
 
 app.use(express.json());
