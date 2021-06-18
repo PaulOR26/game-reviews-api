@@ -33,11 +33,24 @@ exports.selectReviewById = async (reviewId) => {
   else return { review: qryResults[0] };
 };
 
-exports.insertReviewById = async (req) => {
-  const { review_id } = req.params;
-  const { inc_votes } = req.body;
+exports.selectCommentsByReviewId = async (reviewId) => {
+  const { rows: qryResults } = await db.query(
+    `
+SELECT comments.comment_id, comments.votes, comments.created_at, comments.author, comments.body  FROM reviews
+LEFT JOIN comments
+ON reviews.review_id = comments.review_id
+WHERE comments.review_id = $1
+;
+`,
+    [reviewId]
+  );
+  return { comments: qryResults };
+};
 
-  const [isError, errMsg] = badData(req.body, inc_votes);
+exports.insertReviewById = async (reviewId, body) => {
+  const { inc_votes } = body;
+
+  const [isError, errMsg] = badData(body, inc_votes);
 
   if (isError) await rejectData(errMsg);
   else {
@@ -47,7 +60,7 @@ exports.insertReviewById = async (req) => {
   WHERE review_id = $2
   RETURNING *
   `,
-      [inc_votes, review_id]
+      [inc_votes, reviewId]
     );
 
     return { newVotes: qryResults[0].votes };

@@ -211,3 +211,25 @@ describe('GET /api/reviews', () => {
     expect(body.msg).toBe('No reviews for selected category');
   });
 });
+
+describe('GET /api/reviews/:review_id/comments', () => {
+  test('Status 200: sends back all comments for the specified review', async () => {
+    const { body } = await request(app)
+      .get('/api/reviews/3/comments')
+      .expect(200);
+
+    expect(body.comments).toHaveLength(3);
+
+    body.comments.forEach((comment) => {
+      expect(comment).toEqual(
+        expect.objectContaining({
+          comment_id: expect.any(Number),
+          votes: expect.any(Number),
+          created_at: expect.any(String),
+          author: expect.any(String),
+          body: expect.any(String),
+        })
+      );
+    });
+  });
+});
