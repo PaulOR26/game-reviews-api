@@ -6,6 +6,10 @@ const {
   insertReviewById,
 } = require('../models/models');
 
+exports.getApi = (req, res) => {
+  res.send();
+};
+
 exports.getCategories = (req, res) => {
   selectCategories().then((result) => {
     res.status(200).send(result);

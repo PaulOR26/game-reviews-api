@@ -54,12 +54,12 @@ describe('GET /api/reviews/:review_id', () => {
   });
   test('Status 400: Returns error when specified review_id is not a number', async () => {
     const { body } = await request(app).get('/api/reviews/bad').expect(400);
-    expect(body.msg).toBe('Review ID should be a number');
+    expect(body.msg).toBe('Invalid input: Review ID should be a whole number');
 
     const { body: body2 } = await request(app)
       .get('/api/reviews/£$^&*')
       .expect(400);
-    expect(body2.msg).toBe('Review ID should be a number');
+    expect(body2.msg).toBe('Invalid input: Review ID should be a whole number');
   });
 });
 
@@ -238,5 +238,16 @@ describe('GET /api/reviews/:review_id/comments', () => {
       .expect(404);
 
     expect(body.msg).toBe('Requested review does not exist');
+  });
+  test.only('Status 400: Returns error when specified review_id is not a number', async () => {
+    const { body } = await request(app)
+      .get('/api/reviews/bad/comments')
+      .expect(400);
+    expect(body.msg).toBe('Invalid input: Review ID should be a whole number');
+
+    const { body: body2 } = await request(app)
+      .get('/api/reviews/£$^&*/comments')
+      .expect(400);
+    expect(body2.msg).toBe('Invalid input: Review ID should be a whole number');
   });
 });
