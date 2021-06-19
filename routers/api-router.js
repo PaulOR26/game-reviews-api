@@ -2,7 +2,7 @@ const apiRouter = require('express').Router();
 const reviewsRouter = require('../routers/reviews-router');
 const categoriesRouter = require('../routers/categories-router');
 
-const { getApi } = require('../controllers/controllers');
+const { getApi } = require('../mvc/controllers');
 
 apiRouter.route('/').get(getApi);
 

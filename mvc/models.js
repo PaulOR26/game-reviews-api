@@ -1,8 +1,9 @@
 const db = require('../db/connection');
+const format = require('pg-format');
 
 const {
   noReview,
-  badData,
+  badVoteData,
   rejectData,
   badSortBy,
   badOrder,
@@ -92,6 +93,26 @@ exports.selectReviewById = async (reviewId) => {
   else return { review: qryResults[0] };
 };
 
+exports.updateReviewById = async (reviewId, body) => {
+  const { inc_votes } = body;
+
+  const [isError, errMsg] = badVoteData(body, inc_votes);
+
+  if (isError) await rejectData(errMsg);
+  else {
+    const { rows: qryResults } = await db.query(
+      `
+  UPDATE reviews SET votes = votes + $1
+  WHERE review_id = $2
+  RETURNING *
+  `,
+      [inc_votes, reviewId]
+    );
+
+    return { updatedReview: qryResults[0] };
+  }
+};
+
 exports.selectCommentsByReviewId = async (reviewId) => {
   const { rows: qryResults } = await db.query(
     `
@@ -107,22 +128,37 @@ WHERE comments.review_id = $1
   else return { comments: qryResults };
 };
 
-exports.insertReviewById = async (reviewId, body) => {
-  const { inc_votes } = body;
+exports.insertCommentByReviewId = async (username, reviewId, body) => {
+  const { rows } = await db.query(
+    `
+    SELECT * FROM reviews
+    WHERE review_id = $1
+    `,
+    [reviewId]
+  );
 
-  const [isError, errMsg] = badData(body, inc_votes);
+  if (rows.length === 0) await noReview();
 
-  if (isError) await rejectData(errMsg);
-  else {
-    const { rows: qryResults } = await db.query(
-      `
-  UPDATE reviews SET votes = votes + $1
-  WHERE review_id = $2
-  RETURNING *
-  `,
-      [inc_votes, reviewId]
+  if (!username || !body)
+    await rejectData(
+      'Invalid input: posted object should contain username and body keys'
     );
 
-    return { newVotes: qryResults[0].votes };
-  }
+  const commentsInsert = format(
+    `
+    INSERT INTO comments
+    (author, review_id, body)
+    VALUES
+    (%L)
+    RETURNING body
+    `,
+    [username, reviewId, body]
+  );
+
+  const { rows: qryResults } = await db.query(commentsInsert);
+
+  qryResults[0].newComment = qryResults[0].body;
+  delete qryResults[0].body;
+
+  return qryResults[0];
 };

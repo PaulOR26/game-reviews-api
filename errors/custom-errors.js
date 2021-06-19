@@ -1,11 +1,11 @@
 exports.noReview = () => {
   return Promise.reject({
     status: 404,
-    msg: 'Requested review does not exist',
+    msg: 'Review does not exist',
   });
 };
 
-exports.badData = (reqBody, incVotes) => {
+exports.badVoteData = (reqBody, incVotes) => {
   let isError = false;
   let errMsg = '';
 

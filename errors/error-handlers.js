@@ -16,6 +16,8 @@ exports.handlePsqlErrors = (err, req, res, next) => {
     res
       .status(400)
       .send({ msg: 'Invalid input: Review ID should be a whole number' });
+  } else if (err.code === '23503') {
+    res.status(400).send({ msg: 'Invalid input: user does not exist' });
   } else next(err);
 };
 

@@ -1,13 +1,16 @@
+const apiInfo = require('../endpoints');
+
 const {
   selectCategories,
   selectReviews,
   selectReviewById,
   selectCommentsByReviewId,
-  insertReviewById,
-} = require('../models/models');
+  updateReviewById,
+  insertCommentByReviewId,
+} = require('../mvc/models');
 
 exports.getApi = (req, res) => {
-  res.send();
+  res.send({ endPoints: apiInfo });
 };
 
 exports.getCategories = (req, res) => {
@@ -27,8 +30,17 @@ exports.getReviews = (req, res, next) => {
 
 exports.getReviewById = (req, res, next) => {
   const { review_id } = req.params;
-
   selectReviewById(review_id)
+    .then((result) => {
+      res.status(200).send(result);
+    })
+    .catch(next);
+};
+
+exports.patchReviewById = (req, res, next) => {
+  const { review_id } = req.params;
+  const { body } = req;
+  updateReviewById(review_id, body)
     .then((result) => {
       res.status(200).send(result);
     })
@@ -44,12 +56,13 @@ exports.getCommentsByReviewId = (req, res, next) => {
     .catch(next);
 };
 
-exports.patchReviewById = (req, res, next) => {
+exports.postCommentByReviewById = (req, res, next) => {
+  const { username } = req.body;
+  const { body } = req.body;
   const { review_id } = req.params;
-  const { body } = req;
-  insertReviewById(review_id, body)
+  insertCommentByReviewId(username, review_id, body)
     .then((result) => {
-      res.status(200).send(result);
+      res.status(201).send(result);
     })
     .catch(next);
 };
