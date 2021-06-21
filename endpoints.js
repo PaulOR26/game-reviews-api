@@ -40,51 +40,112 @@ module.exports = {
     description: 'serves a review object including comment count',
     queries: [],
     exampleResponse: {
-      review_id: 2,
-      title: 'Jenga',
-      review_body: 'Fiddly fun for all the family',
-      designer: 'Leslie Scott',
-      review_img_url:
-        'https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png',
-      votes: 5,
-      category: 'dexterity',
-      owner: 'philippaclaire9',
-      created_at: '2021-01-18T10:01:41.251Z',
-      comment_count: 3,
+      review: {
+        review_id: 2,
+        title: 'Jenga',
+        review_body: 'Fiddly fun for all the family',
+        designer: 'Leslie Scott',
+        review_img_url:
+          'https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png',
+        votes: 5,
+        category: 'dexterity',
+        owner: 'philippaclaire9',
+        created_at: '2021-01-18T10:01:41.251Z',
+        comment_count: 3,
+      },
     },
   },
   'PATCH /api/reviews/:review_Id': {
     description: 'serves a review object with updated votes',
     queries: [],
     exampleResponse: {
-      review_id: 3,
-      title: 'Ultimate Werewolf',
-      review_body: "We couldn't find the werewolf!",
-      designer: 'Akihisa Okui',
-      review_img_url:
-        'https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png',
-      votes: 4,
-      category: 'social deduction',
-      owner: 'bainesface',
-      created_at: '2021-01-18T10:01:41.251Z',
+      updatedReview: {
+        review_id: 3,
+        title: 'Ultimate Werewolf',
+        review_body: "We couldn't find the werewolf!",
+        designer: 'Akihisa Okui',
+        review_img_url:
+          'https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png',
+        votes: 4,
+        category: 'social deduction',
+        owner: 'bainesface',
+        created_at: '2021-01-18T10:01:41.251Z',
+      },
     },
   },
   'GET /api/reviews/:review_id/comments': {
     description: 'serves an array of comments for the specified review',
     queries: [],
-    exampleResponse: [
-      {
-        comment_id: 2,
-        votes: 13,
-        created_at: '2021-01-18T10:09:05.410Z',
-        author: 'mallionaire',
-        body: 'My dog loved this game too!',
-      },
-    ],
+    exampleResponse: {
+      comments: [
+        {
+          comment_id: 2,
+          votes: 13,
+          created_at: '2021-01-18T10:09:05.410Z',
+          author: 'mallionaire',
+          body: 'My dog loved this game too!',
+        },
+      ],
+    },
   },
   'POST /api/reviews/:review_id/comments': {
     description: 'serves the new comment',
     queries: [],
-    exampleResponse: 'this is a new comment',
+    exampleResponse: { newComment: 'this is a new comment' },
+  },
+  'DELETE /api/comments/:comment_id': {
+    description: 'serves status 204 with no content',
+    queries: [],
+    exampleResponse: 204,
+  },
+  'GET /api/users': {
+    description: 'serves an array of all users',
+    queries: [],
+    exampleResponse: {
+      users: [{ username: 'mallionaire' }, { username: 'philippaclaire9' }],
+    },
+  },
+  'GET /api/users/:username': {
+    description: 'serves the requested user object',
+    queries: [],
+    exampleResponse: {
+      user: {
+        username: 'bainesface',
+        avatar_url:
+          'https://avatars2.githubusercontent.com/u/24394918?s=400&v=4',
+        name: 'sarah',
+      },
+    },
+  },
+  'PATCH /api/comments/:comment_id': {
+    description: 'serves a comment object with updated votes',
+    queries: [],
+    exampleResponse: {
+      updatedComment: {
+        comment_id: 6,
+        author: 'philippaclaire9',
+        review_id: 3,
+        votes: 11,
+        created_at: '2021-03-27T19:49:48.110Z',
+        body: 'Not sure about dogs, but my cat likes to get involved with board games, the boxes are their particular favourite',
+      },
+    },
+  },
+  'POST /api/reviews': {
+    description: 'serves the newly added review',
+    queries: [],
+    exampleResponse: {
+      newReview: {
+        title: 'Mario Kart',
+        review_body: 'This is a fun game',
+        designer: 'Nintendo',
+        category: "children's games",
+        owner: 'dav3rid',
+        review_id: 14,
+        votes: 0,
+        created_at: '2021-06-21T07:51:50.906Z',
+        comment_count: 0,
+      },
+    },
   },
 };

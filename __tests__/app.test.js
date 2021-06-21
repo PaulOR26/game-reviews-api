@@ -403,7 +403,6 @@ describe('GET /api/users', () => {
     const { body } = await request(app).get('/api/users').expect(200);
 
     expect(Array.isArray(body.users)).toBe(true);
-
     body.users.forEach((user) => {
       expect(user).toEqual(
         expect.objectContaining({
