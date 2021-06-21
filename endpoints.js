@@ -11,8 +11,8 @@ module.exports = {
     exampleResponse: {
       categories: [
         {
-          description: "Players attempt to uncover each other's hidden role",
           slug: 'Social deduction',
+          description: "Players attempt to uncover each other's hidden role",
         },
       ],
     },
@@ -24,12 +24,12 @@ module.exports = {
       reviews: [
         {
           title: 'One Night Ultimate Werewolf',
+          category: 'hidden-roles',
           owner: 'happyamy2016',
-          review_id: 2,
           review_img_url:
             'https://images.pexels.com/photos/5350049/pexels-photo-5350049.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260',
-          category: 'hidden-roles',
           created_at: '2021-01-25T11:16:54.963Z',
+          review_id: 2,
           votes: 5,
           comment_count: 3,
         },
@@ -41,16 +41,16 @@ module.exports = {
     queries: [],
     exampleResponse: {
       review: {
-        review_id: 2,
         title: 'Jenga',
+        category: 'dexterity',
         review_body: 'Fiddly fun for all the family',
+        owner: 'philippaclaire9',
         designer: 'Leslie Scott',
         review_img_url:
           'https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png',
-        votes: 5,
-        category: 'dexterity',
-        owner: 'philippaclaire9',
         created_at: '2021-01-18T10:01:41.251Z',
+        review_id: 2,
+        votes: 5,
         comment_count: 3,
       },
     },
@@ -60,16 +60,16 @@ module.exports = {
     queries: [],
     exampleResponse: {
       updatedReview: {
-        review_id: 3,
         title: 'Ultimate Werewolf',
+        category: 'social deduction',
         review_body: "We couldn't find the werewolf!",
-        designer: 'Akihisa Okui',
+        owner: 'bainesface',
         review_img_url:
           'https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png',
-        votes: 4,
-        category: 'social deduction',
-        owner: 'bainesface',
+        designer: 'Akihisa Okui',
         created_at: '2021-01-18T10:01:41.251Z',
+        review_id: 3,
+        votes: 4,
       },
     },
   },
@@ -79,11 +79,11 @@ module.exports = {
     exampleResponse: {
       comments: [
         {
-          comment_id: 2,
-          votes: 13,
-          created_at: '2021-01-18T10:09:05.410Z',
           author: 'mallionaire',
           body: 'My dog loved this game too!',
+          created_at: '2021-01-18T10:09:05.410Z',
+          comment_id: 2,
+          votes: 13,
         },
       ],
     },
@@ -111,9 +111,9 @@ module.exports = {
     exampleResponse: {
       user: {
         username: 'bainesface',
+        name: 'sarah',
         avatar_url:
           'https://avatars2.githubusercontent.com/u/24394918?s=400&v=4',
-        name: 'sarah',
       },
     },
   },
@@ -122,12 +122,12 @@ module.exports = {
     queries: [],
     exampleResponse: {
       updatedComment: {
-        comment_id: 6,
         author: 'philippaclaire9',
+        body: 'Not sure about dogs, but my cat likes to get involved with board games, the boxes are their particular favourite',
+        created_at: '2021-03-27T19:49:48.110Z',
+        comment_id: 6,
         review_id: 3,
         votes: 11,
-        created_at: '2021-03-27T19:49:48.110Z',
-        body: 'Not sure about dogs, but my cat likes to get involved with board games, the boxes are their particular favourite',
       },
     },
   },
@@ -138,12 +138,12 @@ module.exports = {
       newReview: {
         title: 'Mario Kart',
         review_body: 'This is a fun game',
-        designer: 'Nintendo',
         category: "children's games",
         owner: 'dav3rid',
+        designer: 'Nintendo',
+        created_at: '2021-06-21T07:51:50.906Z',
         review_id: 14,
         votes: 0,
-        created_at: '2021-06-21T07:51:50.906Z',
         comment_count: 0,
       },
     },
