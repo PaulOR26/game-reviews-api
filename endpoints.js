@@ -148,4 +148,15 @@ module.exports = {
       },
     },
   },
+  'POST /api/categories': {
+    description: 'serves the newly added category',
+    queries: [],
+    exampleResponse: {
+      newCategory: {
+        slug: 'adventure',
+        description:
+          'Games that involve the player in an interactive story driven by exploring and/or problem solving',
+      },
+    },
+  },
 };
