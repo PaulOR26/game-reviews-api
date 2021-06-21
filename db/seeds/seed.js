@@ -33,15 +33,21 @@ const seed = async (data) => {
     designer VARCHAR(100),
     review_img_url VARCHAR(200) DEFAULT 'https://images.pexels.com/photos/163064/play-stone-network-networked-interactive-163064.jpeg',
     votes INT DEFAULT 0,
-    category VARCHAR(200) REFERENCES categories(slug),
-    owner VARCHAR(100) REFERENCES users(username),
+    category VARCHAR(200) REFERENCES categories(slug)
+    ON UPDATE CASCADE,
+    owner VARCHAR(100) REFERENCES users(username)
+    ON UPDATE CASCADE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
    );`);
 
   await db.query(`CREATE TABLE comments (
     comment_id SERIAL PRIMARY KEY,
-    author VARCHAR(100) REFERENCES users(username),
-    review_id INT NOT NULL,
+    author VARCHAR(100) DEFAULT 'anon' REFERENCES users(username)
+    ON DELETE SET DEFAULT
+    ON UPDATE CASCADE,
+    review_id INT REFERENCES reviews(review_id)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
     votes INT DEFAULT 0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     body VARCHAR(300) NOT NULL

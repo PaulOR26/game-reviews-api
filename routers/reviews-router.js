@@ -4,13 +4,14 @@ const {
   getReviews,
   getReviewById,
   getCommentsByReviewId,
-  patchReviewById,
+  patchVotesById,
   postCommentByReviewById,
+  postReview,
 } = require('../mvc/controllers');
 
-reviewsRouter.route('/').get(getReviews);
+reviewsRouter.route('/').get(getReviews).post(postReview);
 
-reviewsRouter.route('/:review_id').get(getReviewById).patch(patchReviewById);
+reviewsRouter.route('/:review_id').get(getReviewById).patch(patchVotesById);
 
 reviewsRouter
   .route('/:review_id/comments')

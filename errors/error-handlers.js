@@ -13,9 +13,11 @@ exports.handleCustomerErrors = (err, req, res, next) => {
 // Handling psql
 exports.handlePsqlErrors = (err, req, res, next) => {
   if (err.code === '22P02') {
-    res
-      .status(400)
-      .send({ msg: 'Invalid input: Review ID should be a whole number' });
+    res.status(400).send({
+      msg: `Invalid input: ${req.route.path.match(
+        /[\w]+/
+      )} should be a whole number`,
+    });
   } else if (err.code === '23503') {
     res.status(400).send({ msg: 'Invalid input: user does not exist' });
   } else next(err);

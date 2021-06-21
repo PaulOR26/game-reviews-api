@@ -23,13 +23,16 @@
 -- WHERE comments.review_id = 3
 -- ;
 
-SELECT reviews.*, COUNT(comments.review_id) AS comment_count
+SELECT reviews.title, reviews.review_body, reviews.designer, reviews.category, reviews.owner, reviews.review_id, reviews.votes, reviews.created_at, COUNT(comments.review_id) AS comment_count
 FROM reviews
 LEFT JOIN comments
 ON comments.review_id = reviews.review_id
 -- WHERE reviews.review_id = 2
 GROUP BY reviews.review_id
 ;
+
+
+
 
 -- SELECT reviews.owner, title, reviews.review_id, category, review_img_url, reviews.created_at, reviews.votes, COUNT(comments.review_id)::INT AS comment_count 
 -- FROM reviews

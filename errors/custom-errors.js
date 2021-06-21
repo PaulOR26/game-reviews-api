@@ -1,7 +1,7 @@
-exports.noReview = () => {
+exports.itemNotFound = (item) => {
   return Promise.reject({
     status: 404,
-    msg: 'Review does not exist',
+    msg: `${item} does not exist`,
   });
 };
 
@@ -18,7 +18,7 @@ exports.badVoteData = (reqBody, incVotes) => {
   } else if (!incVotes) {
     isError = true;
     errMsg = 'Invalid input: vote key should be "inc_votes';
-  } else if (!/^-*\d+$/.test(incVotes)) {
+  } else if (!/^-*\d+$/.test(incVotes.toString())) {
     isError = true;
     errMsg = 'Invalid input: value should be a whole number';
   }

@@ -5,8 +5,12 @@ const {
   selectReviews,
   selectReviewById,
   selectCommentsByReviewId,
-  updateReviewById,
+  updateVotesById,
   insertCommentByReviewId,
+  sqlDelCommentById,
+  selectUsers,
+  selectUserByUsername,
+  insertReview,
 } = require('../mvc/models');
 
 exports.getApi = (req, res) => {
@@ -37,10 +41,8 @@ exports.getReviewById = (req, res, next) => {
     .catch(next);
 };
 
-exports.patchReviewById = (req, res, next) => {
-  const { review_id } = req.params;
-  const { body } = req;
-  updateReviewById(review_id, body)
+exports.patchVotesById = (req, res, next) => {
+  updateVotesById(req.params, req.body)
     .then((result) => {
       res.status(200).send(result);
     })
@@ -61,6 +63,38 @@ exports.postCommentByReviewById = (req, res, next) => {
   const { body } = req.body;
   const { review_id } = req.params;
   insertCommentByReviewId(username, review_id, body)
+    .then((result) => {
+      res.status(201).send(result);
+    })
+    .catch(next);
+};
+
+exports.deleteCommentById = (req, res, next) => {
+  const { comment_id } = req.params;
+  sqlDelCommentById(comment_id)
+    .then(() => {
+      res.status(204).send();
+    })
+    .catch(next);
+};
+
+exports.getUsers = (req, res) => {
+  selectUsers().then((result) => {
+    res.status(200).send(result);
+  });
+};
+
+exports.getUserByUsername = (req, res, next) => {
+  selectUserByUsername(req.params.username)
+    .then((result) => {
+      res.status(200).send(result);
+    })
+    .catch(next);
+};
+
+exports.postReview = (req, res, next) => {
+  const { body } = req;
+  insertReview(body)
     .then((result) => {
       res.status(201).send(result);
     })
