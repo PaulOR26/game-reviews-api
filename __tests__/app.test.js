@@ -596,24 +596,65 @@ describe('POST /api/reviews', () => {
   });
 });
 
-// describe('POST /api/categories', () => {
-//   test('Status 201: Returns newly added category', async () => {
-//     const reqBody = {
-//       slug: 'adventure',
-//       description:
-//         'Games that involve the player in an interactive story driven by exploring and/or problem solving',
-//     };
-//     const { body } = await request(app)
-//       .post('/api/categories')
-//       .send(reqBody)
-//       .expect(201);
+describe('POST /api/categories', () => {
+  test('Status 201: Returns newly added category', async () => {
+    const reqBody = {
+      slug: 'adventure',
+      description:
+        'Games that involve the player in an interactive story driven by exploring and/or problem solving',
+    };
+    const { body } = await request(app)
+      .post('/api/categories')
+      .send(reqBody)
+      .expect(201);
 
-//     expect(body.newCategory).toEqual(
-//       expect.objectContaining({
-//         slug: 'adventure',
-//         description:
-//           'Games that involve the player in an interactive story driven by exploring and/or problem solving',
-//       })
-//     );
-//   });
-// });
+    expect(body.newCategory).toEqual(
+      expect.objectContaining({
+        slug: 'adventure',
+        description:
+          'Games that involve the player in an interactive story driven by exploring and/or problem solving',
+      })
+    );
+  });
+  test('Status 400: Returns error when object has missing key', async () => {
+    const reqBody = {
+      description:
+        'Games that involve the player in an interactive story driven by exploring and/or problem solving',
+    };
+    const { body } = await request(app)
+      .post('/api/categories')
+      .send(reqBody)
+      .expect(400);
+
+    expect(body.msg).toBe('Invalid input: posted object should include slug');
+  });
+  test("Status 400: Returns error when values aren't all strings", async () => {
+    const reqBody = {
+      slug: 7,
+      description:
+        'Games that involve the player in an interactive story driven by exploring and/or problem solving',
+    };
+    const { body } = await request(app)
+      .post('/api/categories')
+      .send(reqBody)
+      .expect(400);
+
+    expect(body.msg).toBe(
+      'Invalid input: submitted data should be in string format'
+    );
+  });
+  test("Doesn't mutate the given object", async () => {
+    const reqBody = {
+      slug: 'adventure',
+      description:
+        'Games that involve the player in an interactive story driven by exploring and/or problem solving',
+    };
+    await request(app).post('/api/categories').send(reqBody);
+
+    expect(reqBody).toEqual({
+      slug: 'adventure',
+      description:
+        'Games that involve the player in an interactive story driven by exploring and/or problem solving',
+    });
+  });
+});

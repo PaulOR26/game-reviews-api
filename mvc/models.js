@@ -10,7 +10,9 @@ const {
   badCategory,
   noCatResults,
 } = require('../errors/custom-errors');
-const reviews = require('../db/data/test-data/reviews');
+
+const { checkString, checkKeys } = require('../utils');
+// const reviews = require('../db/data/test-data/reviews');
 
 exports.selectCategories = async () => {
   const { rows } = await db.query(`SELECT * FROM categories;`);
@@ -206,11 +208,7 @@ exports.selectUserByUsername = async (username) => {
 };
 
 exports.insertReview = async (postedRev) => {
-  let isString = true;
-
-  for (const val in postedRev) {
-    if (typeof postedRev[val] !== 'string') isString = false;
-  }
+  await checkString(postedRev);
 
   const expectedKeys = [
     'owner',
@@ -220,40 +218,29 @@ exports.insertReview = async (postedRev) => {
     'category',
   ];
 
-  const givenKeys = Object.keys(postedRev);
+  await checkKeys(expectedKeys, Object.keys(postedRev));
 
-  const missingKeys = expectedKeys.filter((key) => !givenKeys.includes(key));
-
-  if (missingKeys.length > 0)
-    await rejectData(
-      `Invalid input: posted object should include ${missingKeys.join(' & ')}`
-    );
-  else if (!isString)
-    await rejectData(
-      'Invalid input: submitted data should be in string format'
-    );
-  else {
-    const reviewsInsert = format(
-      `
+  const reviewsInsert = format(
+    `
     INSERT INTO reviews
     (title, review_body, designer, category, owner)
     VALUES
     (%L)
     RETURNING review_id;
     `,
-      [
-        postedRev.title,
-        postedRev.review_body,
-        postedRev.designer,
-        postedRev.category,
-        postedRev.owner,
-      ]
-    );
+    [
+      postedRev.title,
+      postedRev.review_body,
+      postedRev.designer,
+      postedRev.category,
+      postedRev.owner,
+    ]
+  );
 
-    const { rows: id } = await db.query(reviewsInsert);
+  const { rows: id } = await db.query(reviewsInsert);
 
-    const { rows } = await db.query(
-      `
+  const { rows } = await db.query(
+    `
     SELECT reviews.title, reviews.review_body, reviews.designer, reviews.category, reviews.owner, reviews.review_id, reviews.votes, reviews.created_at, COUNT(comments.review_id)::INT AS comment_count
     FROM reviews
     LEFT JOIN comments
@@ -261,15 +248,30 @@ exports.insertReview = async (postedRev) => {
     WHERE reviews.review_id = $1
     GROUP BY reviews.review_id;
     `,
-      [id[0].review_id]
-    );
+    [id[0].review_id]
+  );
 
-    return { newReview: rows[0] };
-  }
+  return { newReview: rows[0] };
 };
 
-// exports.insertCategory = async (newCat) => {
-//   await db.query(`
+exports.insertCategory = async (newCat) => {
+  await checkString(newCat);
 
-//   `);
-// };
+  const expectedKeys = ['slug', 'description'];
+
+  await checkKeys(expectedKeys, Object.keys(newCat));
+
+  const catInsert = format(
+    `
+    INSERT INTO categories
+    (slug, description)
+    VALUES
+    (%L)
+    RETURNING *
+    `,
+    [newCat.slug, newCat.description]
+  );
+  const { rows } = await db.query(catInsert);
+
+  return { newCategory: rows[0] };
+};
