@@ -12,7 +12,7 @@
 
 \c nc_games_test
 
--- SELECT * FROM categories;
+SELECT * FROM categories;
 -- SELECT * FROM users;
 -- SELECT * FROM reviews;
 -- SELECT * FROM comments;
@@ -23,13 +23,13 @@
 -- WHERE comments.review_id = 3
 -- ;
 
-SELECT reviews.title, reviews.review_body, reviews.designer, reviews.category, reviews.owner, reviews.review_id, reviews.votes, reviews.created_at, COUNT(comments.review_id) AS comment_count
-FROM reviews
-LEFT JOIN comments
-ON comments.review_id = reviews.review_id
--- WHERE reviews.review_id = 2
-GROUP BY reviews.review_id
-;
+-- SELECT reviews.title, reviews.review_body, reviews.designer, reviews.category, reviews.owner, reviews.review_id, reviews.votes, reviews.created_at, COUNT(comments.review_id) AS comment_count
+-- FROM reviews
+-- LEFT JOIN comments
+-- ON comments.review_id = reviews.review_id
+-- -- WHERE reviews.review_id = 2
+-- GROUP BY reviews.review_id
+-- ;
 
 
 

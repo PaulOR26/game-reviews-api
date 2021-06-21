@@ -239,6 +239,12 @@ describe('PATCH /api/reviews/:review_Id', () => {
       'Invalid input: There should only be 1 vote key (inc_votes)'
     );
   });
+  test("Doesn't mutate the given object", async () => {
+    const reqBody = { inc_votes: -1 };
+    await request(app).patch('/api/reviews/3').send(reqBody);
+
+    expect(reqBody).toEqual({ inc_votes: -1 });
+  });
 });
 
 describe('GET /api/reviews/:review_id/comments', () => {
@@ -359,6 +365,18 @@ describe('POST /api/reviews/:review_id/comments', () => {
       .expect(400);
 
     expect(body.msg).toBe('Invalid input: comment should be a string');
+  });
+  test("Doesn't mutate the given object", async () => {
+    const reqBody = {
+      username: 'dav3rid',
+      body: 'this is good',
+    };
+    await request(app).post('/api/reviews/11/comments').send(reqBody);
+
+    expect(reqBody).toEqual({
+      username: 'dav3rid',
+      body: 'this is good',
+    });
   });
 });
 
@@ -489,6 +507,12 @@ describe('PATCH /api/comments/:comment_id', () => {
       'Invalid input: There should only be 1 vote key (inc_votes)'
     );
   });
+  test("Doesn't mutate the given object", async () => {
+    const reqBody = { inc_votes: 1 };
+    await request(app).patch('/api/comments/6').send(reqBody);
+
+    expect(reqBody).toEqual({ inc_votes: 1 });
+  });
 });
 
 describe('POST /api/reviews', () => {
@@ -552,4 +576,44 @@ describe('POST /api/reviews', () => {
       'Invalid input: submitted data should be in string format'
     );
   });
+  test("Doesn't mutate the given object", async () => {
+    const reqBody = {
+      owner: 'dav3rid',
+      title: 'Mario Kart',
+      review_body: 'This is a fun game',
+      designer: 'Nintendo',
+      category: "children's games",
+    };
+    await request(app).post('/api/reviews').send(reqBody);
+
+    expect(reqBody).toEqual({
+      owner: 'dav3rid',
+      title: 'Mario Kart',
+      review_body: 'This is a fun game',
+      designer: 'Nintendo',
+      category: "children's games",
+    });
+  });
 });
+
+// describe('POST /api/categories', () => {
+//   test('Status 201: Returns newly added category', async () => {
+//     const reqBody = {
+//       slug: 'adventure',
+//       description:
+//         'Games that involve the player in an interactive story driven by exploring and/or problem solving',
+//     };
+//     const { body } = await request(app)
+//       .post('/api/categories')
+//       .send(reqBody)
+//       .expect(201);
+
+//     expect(body.newCategory).toEqual(
+//       expect.objectContaining({
+//         slug: 'adventure',
+//         description:
+//           'Games that involve the player in an interactive story driven by exploring and/or problem solving',
+//       })
+//     );
+//   });
+// });

@@ -11,6 +11,7 @@ const {
   selectUsers,
   selectUserByUsername,
   insertReview,
+  // insertCategory,
 } = require('../mvc/models');
 
 exports.getApi = (req, res) => {
@@ -100,3 +101,10 @@ exports.postReview = (req, res, next) => {
     })
     .catch(next);
 };
+
+// exports.postCategory = (req, res, next) => {
+//   const { body } = req;
+//   insertCategory(body).then((result) => {
+//     res.status(201).send(result);
+//   });
+// };

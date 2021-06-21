@@ -205,11 +205,11 @@ exports.selectUserByUsername = async (username) => {
   else return { user: rows[0] };
 };
 
-exports.insertReview = async (body) => {
+exports.insertReview = async (postedRev) => {
   let isString = true;
 
-  for (const val in body) {
-    if (typeof body[val] !== 'string') isString = false;
+  for (const val in postedRev) {
+    if (typeof postedRev[val] !== 'string') isString = false;
   }
 
   const expectedKeys = [
@@ -220,7 +220,7 @@ exports.insertReview = async (body) => {
     'category',
   ];
 
-  const givenKeys = Object.keys(body);
+  const givenKeys = Object.keys(postedRev);
 
   const missingKeys = expectedKeys.filter((key) => !givenKeys.includes(key));
 
@@ -241,7 +241,13 @@ exports.insertReview = async (body) => {
     (%L)
     RETURNING review_id;
     `,
-      [body.title, body.review_body, body.designer, body.category, body.owner]
+      [
+        postedRev.title,
+        postedRev.review_body,
+        postedRev.designer,
+        postedRev.category,
+        postedRev.owner,
+      ]
     );
 
     const { rows: id } = await db.query(reviewsInsert);
@@ -261,3 +267,9 @@ exports.insertReview = async (body) => {
     return { newReview: rows[0] };
   }
 };
+
+// exports.insertCategory = async (newCat) => {
+//   await db.query(`
+
+//   `);
+// };
