@@ -119,10 +119,10 @@ describe('GET /api/reviews', () => {
 
     expect(body.msg).toBe('Invalid input: sort_by column does not exist');
   });
-  test('status 405: order !== asc or desc', async () => {
+  test('status 400: order !== asc or desc', async () => {
     const { body } = await request(app)
       .get('/api/reviews?order=dc&category=social deduction&sort_by=votes')
-      .expect(405);
+      .expect(400);
 
     expect(body.msg).toBe('Invalid input: order should be asc or desc');
   });
@@ -133,7 +133,7 @@ describe('GET /api/reviews', () => {
 
     expect(body.msg).toBe("Invalid input: category doesn't exist");
   });
-  test('status 204: category exists but there are no associated reviews', async () => {
+  test('status 404: category exists but there are no associated reviews', async () => {
     const { body } = await request(app)
       .get("/api/reviews?order=desc&category=children's games&sort_by=votes")
       .expect(404);
@@ -201,6 +201,24 @@ describe('PATCH /api/reviews/:review_Id', () => {
       created_at: '2021-01-18T10:01:41.251Z',
     });
   });
+  test('Status 404: Returns error when specified review_id does not exist', async () => {
+    const reqBody = { inc_votes: -1 };
+    const { body } = await request(app)
+      .patch('/api/reviews/14')
+      .send(reqBody)
+      .expect(404);
+
+    expect(body.msg).toBe('Review does not exist');
+  });
+  test('Status 400: Returns error when specified review_id is not a number', async () => {
+    const reqBody = { inc_votes: -1 };
+    const { body } = await request(app)
+      .patch('/api/reviews/bad')
+      .send(reqBody)
+      .expect(400);
+
+    expect(body.msg).toBe('Invalid input: review_id should be a whole number');
+  });
   test('Status 400 - Returns error when votes not a number', async () => {
     const reqBody = { inc_votes: 'hello' };
     const { body } = await request(app)
@@ -266,6 +284,13 @@ describe('GET /api/reviews/:review_id/comments', () => {
         })
       );
     });
+  });
+  test('Status 200: Responds with an empty array when valid id but no comments', async () => {
+    const { body } = await request(app)
+      .get('/api/reviews/4/comments')
+      .expect(200);
+
+    expect(body.comments).toEqual([]);
   });
   test('Status 404: Returns error when specified review_id does not exist', async () => {
     const { body } = await request(app)
@@ -339,7 +364,9 @@ describe('POST /api/reviews/:review_id/comments', () => {
       .send(reqBody)
       .expect(400);
 
-    expect(body.msg).toBe('Invalid input: user does not exist');
+    expect(body.msg).toBe(
+      'Key (author)=(david) is not present in table "users".'
+    );
   });
   test('Status 400: Returns error when object has missing key', async () => {
     const reqBody = {
@@ -421,6 +448,9 @@ describe('GET /api/users', () => {
     const { body } = await request(app).get('/api/users').expect(200);
 
     expect(Array.isArray(body.users)).toBe(true);
+
+    expect(body.users).toHaveLength(4);
+
     body.users.forEach((user) => {
       expect(user).toEqual(
         expect.objectContaining({

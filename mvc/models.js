@@ -12,7 +12,6 @@ const {
 } = require('../errors/custom-errors');
 
 const { checkString, checkKeys } = require('../utils');
-// const reviews = require('../db/data/test-data/reviews');
 
 exports.selectCategories = async () => {
   const { rows } = await db.query(`SELECT * FROM categories;`);
@@ -38,9 +37,7 @@ exports.selectReviews = async (query) => {
     return cat.slug;
   });
 
-  const { sort_by = 'created_at' } = query;
-  const { order = 'desc' } = query;
-  const { category } = query;
+  const { sort_by = 'created_at', order = 'desc', category } = query;
 
   const filters = [];
 
@@ -114,10 +111,12 @@ exports.updateVotesById = async (params, body) => {
   `,
       [inc_votes, params[param]]
     );
-
-    return {
-      [`updated${table.charAt(0).toUpperCase()}${table.slice(1, -1)}`]: rows[0],
-    };
+    if (!rows[0]) await itemNotFound('Review');
+    else
+      return {
+        [`updated${table.charAt(0).toUpperCase()}${table.slice(1, -1)}`]:
+          rows[0],
+      };
   }
 };
 
@@ -132,8 +131,20 @@ WHERE comments.review_id = $1
 `,
     [reviewId]
   );
-  if (qryResults.length === 0) await itemNotFound('Review');
-  else return { comments: qryResults };
+
+  if (qryResults.length === 0) {
+    const { rows } = await db.query(
+      `
+  SELECT * FROM reviews
+  WHERE review_id = $1
+  ;
+  `,
+      [reviewId]
+    );
+
+    if (rows.length === 0) await itemNotFound('Review');
+  }
+  return { comments: qryResults };
 };
 
 exports.insertCommentByReviewId = async (username, reviewId, body) => {

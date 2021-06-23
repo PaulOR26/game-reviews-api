@@ -42,7 +42,7 @@ exports.badSortBy = () => {
 
 exports.badOrder = () => {
   return Promise.reject({
-    status: 405,
+    status: 400,
     msg: 'Invalid input: order should be asc or desc',
   });
 };

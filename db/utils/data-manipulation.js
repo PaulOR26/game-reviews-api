@@ -1,4 +1,4 @@
-const db = require("../connection");
+const db = require('../connection');
 
 function addCategories(categoryArray) {
   return categoryArray.map((catObj) => {
@@ -16,7 +16,7 @@ function addReviews(reviewArray) {
   return reviewArray.map((reviewObj) => {
     if (reviewObj.review_img_url === undefined) {
       reviewObj.review_img_url =
-        "https://images.pexels.com/photos/163064/play-stone-network-networked-interactive-163064.jpeg";
+        'https://images.pexels.com/photos/163064/play-stone-network-networked-interactive-163064.jpeg';
     }
 
     return [
