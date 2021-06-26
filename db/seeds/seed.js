@@ -23,7 +23,7 @@ const seed = async (data) => {
   await db.query(`CREATE TABLE users (
       username VARCHAR(100) PRIMARY KEY,
       avatar_url VARCHAR(200),
-      name VARCHAR(100)
+      name VARCHAR(100) DEFAULT 'anon'
       );`);
 
   await db.query(`CREATE TABLE reviews (
