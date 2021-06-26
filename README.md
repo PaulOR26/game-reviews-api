@@ -8,38 +8,44 @@ The intention was to mimick the building of a real world backend service (such a
 
 This API stores, grants access to, and allows modification of game review information as well as the associated user details, by way of a relational PSQL database.
 
-Click here to view the hosted version of this app.
+[Click here to view the hosted version of this app.](https://game-reviews-project.herokuapp.com/api)
 (You might to install a JSON formatter browser extension in order to view the detail in a readable format.)
 
 ## Setup
 
-- **Fork** this repo
+- **Fork** this repo  
   ![](readme-screenshot-fork.png)
 
-- **Clone** to your local machine
-  run `git clone https://github.com/PaulOR26/game-reviews-api.git`
+- **Clone** to your local machine  
+  `git clone https://github.com/PaulOR26/game-reviews-api.git`
 
-- **Install** dependencies
-  run `npm install`
+- **Install** dependencies  
+  `npm install`
 
 - **Define environment**
 
-  - Create file: `.env.test`
-  - Include within file: `PGDATABASE=game_reviews_test`
+  - Create file:  
+    `.env.test`  
+    Include within file: `PGDATABASE=game_reviews_test`
 
-  - Create file: `.env.development`
-  - Include within file: `PGDATABASE=game_reviews`
+  - Create file:  
+    `.env.development`  
+    Include within file: `PGDATABASE=game_reviews`
 
   (Double check these files (_as well as your node_modules_) are included within the .gitignore file.)
 
-- **Create the databases** by running `npm run setup-dbs`
+- **Create the databases**  
+  `npm run setup-dbs`
 
-- **Seed the databases** by running `npm run seed`
+- **Seed the databases**  
+  `npm run seed`
 
 ## Testing
 
-- run `npm test app` to test the endpoints
-- run `npm test utils` to test the database seeding utility functions
+- Test the endpoints  
+  `npm test app`
+- Test the database seeding utility functions  
+  `npm test utils`
 
 ## Requirements
 
