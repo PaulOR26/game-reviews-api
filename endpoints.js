@@ -159,4 +159,9 @@ module.exports = {
       },
     },
   },
+  'DELETE /api/reviews/:review_id': {
+    description: 'serves status 204 with no content',
+    queries: [],
+    exampleResponse: 204,
+  },
 };
