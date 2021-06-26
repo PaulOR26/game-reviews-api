@@ -325,13 +325,13 @@ describe('POST /api/reviews/:review_id/comments', () => {
 
     expect(body.newComment).toBe('this is good');
 
-    const qryComment = await db.query(`
+    const { rows } = await db.query(`
       SELECT * FROM comments
       WHERE comment_id = 7
       ;
       `);
 
-    expect(qryComment.rows[0]).toEqual(
+    expect(rows[0]).toEqual(
       expect.objectContaining({
         comment_id: 7,
         votes: 0,
