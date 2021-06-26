@@ -6,10 +6,10 @@ This project was to build an API for the purpose of accessing application data p
 
 The intention was to mimick the building of a real world backend service (such as reddit) that provides information to a front end architecture.
 
-This API stores, grants access to, and allows modification of game review information as well as the associated user details, by way of a relational PSQL database.
+The API stores, grants access to, and allows modification of game review information as well as the associated user details, by way of a relational PSQL database.
 
 [Click here to view the hosted version of this app.](https://game-reviews-project.herokuapp.com/api)
-(You might to install a JSON formatter browser extension in order to view the detail in a readable format.)
+(You may need to install a JSON formatter browser extension in order to view the detail in a readable format.)
 
 ## Setup
 
@@ -32,7 +32,7 @@ This API stores, grants access to, and allows modification of game review inform
     `.env.development`  
     Include within file: `PGDATABASE=game_reviews`
 
-  (Double check these files (_as well as your node_modules_) are included within the .gitignore file.)
+  Double check these files (_as well as your node_modules_) are included within the .gitignore file.
 
 - **Create the databases**  
   `npm run setup-dbs`
