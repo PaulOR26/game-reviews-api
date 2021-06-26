@@ -34,10 +34,10 @@ The API stores, grants access to, and allows modification of game review informa
 
   Double check these files (_as well as your node_modules_) are included within the .gitignore file.
 
-- **Create the databases**  
+- **Create the database**  
   `npm run setup-dbs`
 
-- **Seed the databases**  
+- **Seed the database**  
   `npm run seed`
 
 ## Testing
