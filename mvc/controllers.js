@@ -12,6 +12,7 @@ const {
   selectUserByUsername,
   insertReview,
   insertCategory,
+  sqlDelReviewById,
 } = require('../mvc/models');
 
 exports.getApi = (req, res) => {
@@ -107,6 +108,15 @@ exports.postCategory = (req, res, next) => {
   insertCategory(body)
     .then((result) => {
       res.status(201).send(result);
+    })
+    .catch(next);
+};
+
+exports.deleteReviewById = (req, res, next) => {
+  const { review_id } = req.params;
+  sqlDelReviewById(review_id)
+    .then((result) => {
+      res.status(204).send();
     })
     .catch(next);
 };
