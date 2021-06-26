@@ -1,4 +1,4 @@
-# Game Reviews Api
+# Game Reviews API
 
 ## Description
 
