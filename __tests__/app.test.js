@@ -325,13 +325,13 @@ describe('POST /api/reviews/:review_id/comments', () => {
 
     expect(body.newComment).toBe('this is good');
 
-    const qryComment = await db.query(`
+    const { rows } = await db.query(`
       SELECT * FROM comments
       WHERE comment_id = 7
       ;
       `);
 
-    expect(qryComment.rows[0]).toEqual(
+    expect(rows[0]).toEqual(
       expect.objectContaining({
         comment_id: 7,
         votes: 0,
@@ -686,5 +686,48 @@ describe('POST /api/categories', () => {
       description:
         'Games that involve the player in an interactive story driven by exploring and/or problem solving',
     });
+  });
+});
+
+describe('DELETE /api/reviews/:review_id', () => {
+  test('Status 204: Deletes the specified review and returns no content', async () => {
+    const { body } = await request(app).delete('/api/reviews/8').expect(204);
+
+    expect(body).toEqual({});
+
+    const { rows } = await db.query(`
+    SELECT review_id FROM reviews;
+    `);
+
+    expect(rows).toHaveLength(12);
+
+    expect(rows).toEqual(
+      expect.arrayContaining([
+        { review_id: 1 },
+        { review_id: 2 },
+        { review_id: 3 },
+        { review_id: 4 },
+        { review_id: 5 },
+        { review_id: 6 },
+        { review_id: 7 },
+        { review_id: 9 },
+        { review_id: 10 },
+        { review_id: 11 },
+        { review_id: 12 },
+        { review_id: 13 },
+      ])
+    );
+  });
+  test('Status 404: Returns error when specified review_id does not exist', async () => {
+    const { body } = await request(app).delete('/api/reviews/23').expect(404);
+
+    expect(body.msg).toBe('Review does not exist');
+  });
+  test('Status 400: Returns error when specified review_id is not a number', async () => {
+    const { body } = await request(app)
+      .delete('/api/reviews/xxxxy')
+      .expect(400);
+
+    expect(body.msg).toBe('Invalid input: review_id should be a whole number');
   });
 });

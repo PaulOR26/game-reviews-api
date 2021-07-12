@@ -286,3 +286,16 @@ exports.insertCategory = async (newCat) => {
 
   return { newCategory: rows[0] };
 };
+
+exports.sqlDelReviewById = async (reviewId) => {
+  const { rows } = await db.query(
+    `
+  DELETE FROM reviews
+  WHERE review_id = $1
+  RETURNING *;
+  `,
+    [reviewId]
+  );
+
+  if (!rows[0]) await itemNotFound('Review');
+};
