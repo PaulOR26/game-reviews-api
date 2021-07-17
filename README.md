@@ -8,8 +8,12 @@ The intention was to mimick the building of a real world backend service (such a
 
 The API stores, grants access to, and allows modification of game review information as well as the associated user details, by way of a relational PSQL database.
 
-[Click here to view the hosted version of this API.](https://game-reviews-project.herokuapp.com/api)
+[Click here to view the hosted version of this API.](https://game-reviews-project.herokuapp.com/api){target="\_blank"}
 (You may need to install a 'JSON formatter' browser extension in order to view the detail in a readable format.)
+
+[Click here to view the front-end repo.](https://github.com/PaulOR26/game-reviews-app){target="\_blank"}
+
+[Click here to view the front-end hosted website.](https://game-reviews-app.netlify.app/){target="\_blank"}
 
 ## Setup
 
@@ -17,7 +21,7 @@ The API stores, grants access to, and allows modification of game review informa
   ![](readme-screenshot-fork.png)
 
 - **Clone** to your local machine  
-  `git clone https://github.com/PaulOR26/game-reviews-api.git`
+  `git clone https://github.com/PaulOR26/game-reviews-project.git`
 
 - **Install** dependencies  
   `npm install`
