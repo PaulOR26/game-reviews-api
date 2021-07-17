@@ -8,7 +8,7 @@ The intention was to mimick the building of a real world backend service (such a
 
 The API stores, grants access to, and allows modification of game review information as well as the associated user details, by way of a relational PSQL database.
 
-[Click here to view the hosted version of this app.](https://game-reviews-project.herokuapp.com/api)
+[Click here to view the hosted version of this API.](https://game-reviews-project.herokuapp.com/api)
 (You may need to install a 'JSON formatter' browser extension in order to view the detail in a readable format.)
 
 ## Setup
